@@ -219,24 +219,30 @@ def plot_focus(index):
 def plot_multi_LR(index, tem=False):
     """绘制所有标志点位置与参考位置的差值, tem为True时读取温度修正后的数据"""
     Row_data, Column_data = read_multi(index, tem)
-    Row_dataR, Column_dataR = read_multi(index+'R', tem)
     fig = plt.figure()
     ax1 = fig.add_subplot(2, 2, 1)
     timeline = np.linspace(0, (len(Row_data)-3)/120, len(Row_data)-3)
     Row_array = np.array(list(Row_data.values()))
     for i in range(len(Row_array[0])):
-        ax1.plot(timeline, Row_array[3:, i], linewidth=0.3)
+        Rowi = Row_array[3:, i]
+        Index = np.argwhere(abs(Rowi) > 15)
+        if Rowi[1] > 0:
+            ax1.plot(np.delete(timeline, Index), np.delete(Rowi, Index), linewidth=0.3)
     ax1.set_title("行坐标变化随时间分布")
     # ax1.set_xlabel("时间/h")
     ax1.set_ylabel("左相机/像素")
     ax2 = fig.add_subplot(2, 2, 2)
     Column_array = np.array(list(Column_data.values()))
     for i in range(len(Row_array[0])):
-        ax2.plot(timeline, Column_array[3:, i], linewidth=0.3)
+        Columni = Column_array[3:, i]
+        Index = np.argwhere(abs(Columni) > 5)
+        if Columni[1] > 0:
+            ax2.plot(np.delete(timeline, Index), np.delete(Columni, Index), linewidth=0.3)
     ax2.set_title("列坐标变化随时间分布")
-    # plt.show()
+    plt.show()
     # ax2.set_xlabel("时间/h")
     # 右相机
+    Row_dataR, Column_dataR = read_multi(index+'R', tem)
     ax3 = fig.add_subplot(2, 2, 3)
     timelineR = np.linspace(0, (len(Row_dataR)-3)/120, len(Row_dataR)-3)
     Row_arrayR = np.array(list(Row_dataR.values()))
@@ -292,7 +298,7 @@ def plot_multi_LR_new(index, tem=False):
 
 
 if __name__ == '__main__':
-    plot_multi_LR('N5-6')
+    plot_multi_LR('N6-1')
     # plot_multi('YT-4', 0)
     # plot_focus('N5-4R')
     # plot_tem_all()

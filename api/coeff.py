@@ -27,7 +27,13 @@ def mark_coordinate(img_name):
     try:
         ha.find_calib_object(image, calib_data_id, 0, 0, 1, [], [])
         Row, Column, Index, Pose = ha.get_calib_data_observ_points(calib_data_id, 0, 0, 1)
-        return Row, Column
+        # 未识别出的标志点补0
+        Rowx = [0] * 77
+        Columnx = [0] * 77
+        for i in range(len(Index)):
+            Rowx[Index[i]] = Row[i]
+            Columnx[Index[i]] = Column[i]
+        return Rowx, Columnx
     except ha.ffi.HOperatorError:
         print('标志点读取失败')
     # return np.array(Row)-np.array([height[0]/2]*len(Row)), np.array(Column)-np.array([width[0]/2]*len(Column))
